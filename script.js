@@ -5,10 +5,10 @@ const countriesContainer = document.querySelector(".countries");
 let currency, language;
 
 const renderCountry = function (data, className = "") {
+  //   console.log(data);
   for (let key in data.currencies) {
     currency = data.currencies[key].name;
   }
-
   const html = `
     
     <article class="country ${className}">
@@ -62,7 +62,17 @@ const renderCountry = function (data, className = "") {
 const renderCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then((response) => response.json())
-    .then((data) => renderCountry(data[0]));
+    .then((data) => {
+        console.log(data);
+      renderCountry(data[0]);
+      const neighbour = data[0].borders[0];
+
+      if (!neighbour) return;
+
+      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
+    .then((response) => response.json())
+    .then((data) => renderCountry(data[0], "neighbour"));
 };
 
-renderCountryData("iran");
+renderCountryData("portugal");
