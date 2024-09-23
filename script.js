@@ -29,7 +29,7 @@ const renderCountry = function (data, className = "") {
   `;
 
   countriesContainer.insertAdjacentHTML("beforeend", html);
-  countriesContainer.style.opacity = 1;
+  //   countriesContainer.style.opacity = 1;
 };
 
 // const getCountryDataNeighbour = function (country) {
@@ -59,11 +59,13 @@ const renderCountry = function (data, className = "") {
 
 // getCountryDataNeighbour("usa");
 
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText("beforeend", msg);
+};
 const renderCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then((response) => response.json())
     .then((data) => {
-        console.log(data);
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
 
@@ -72,7 +74,15 @@ const renderCountryData = function (country) {
       return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
     })
     .then((response) => response.json())
-    .then((data) => renderCountry(data[0], "neighbour"));
+    .then((data) => renderCountry(data[0], "neighbour"))
+    .catch((err) => {
+      console.log(`${err}🔴🔴`);
+      renderError(`Oppsss... ${err}. Try Again!`);
+    })
+
+    .finally(() => (countriesContainer.style.opacity = 1));
 };
 
-renderCountryData("portugal");
+btn.addEventListener("click", function () {
+  renderCountryData("portugal");
+});
